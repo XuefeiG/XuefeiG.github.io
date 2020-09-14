@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Xuefei Gao" />
+
+
+<title>Lab-03: Projections, Distances, and Mapping</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/sandstone.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Xuefei Geo176A Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="geog176A.html">
+    <span class="fa fa-globe"></span>
+     
+    GIS Work
+  </a>
+</li>
+<li>
+  <a href="CV.html">
+    <span class="fa fa-frog"></span>
+     
+    CV
+  </a>
+</li>
+<li>
+  <a href="lab03.html">
+    <span class="fa fa-android"></span>
+     
+    lab03
+  </a>
+</li>
+<li>
+  <a href="lab04.html">
+    <span class="fa fa-android"></span>
+     
+    lab04
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/XuefeiG/XuefeiG.github.io">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Lab-03: Projections, Distances, and Mapping</h1>
+<h4 class="author">Xuefei Gao</h4>
+<h4 class="date">2020/8/24</h4>
+
+</div>
+
+
+<i class="fa fa-android fa-3x" style="color:pink;"></i>
+</center>
+<pre class="r"><code>library(tidyverse)
+library(sf)
+library(units)
+library(rnaturalearth)
+library(knitr)
+library(USAboundaries)
+library(ggrepel)
+library(gghighlight)
+
+# Question 1
+# 1.1 - Define a Projection
+eqdc = &#39;+proj=eqdc +lat_0=40 +lon_0=-96 +lat_1=20 +lat_2=60 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs&#39;
+region = data.frame(region = state.region, state_name = state.name)
+
+# 1.2 - Get USA state boundaries
+USConus = USAboundaries::us_states() %&gt;%
+  filter(!name %in% c(&quot;Puerto Rico&quot;, &quot;Alaska&quot;, &quot;Hawaii&quot;))
+
+#1.3 - Get country boundaries for Mexico, the United States of America, and Canada
+Boundaries = rnaturalearthdata::countries110 %&gt;%
+  st_as_sf() %&gt;%
+  filter(name %in% c(&quot;Mexico&quot;, &quot;United States of America&quot;, &quot;Canada&quot;))
+
+# 1.4 - Get city locations from the CSV file
+UScities = readr::read_csv(&quot;data/uscities.csv&quot;) %&gt;%
+  filter(!state_name %in% c(&quot;Puerto Rico&quot;, &quot;Alaska&quot;, &quot;Hawaii&quot;)) %&gt;%
+  st_as_sf(coords = c(&quot;lng&quot;, &quot;lat&quot;), crs = 4326) %&gt;%
+  st_filter(USConus, .predicate = st_intersects)
+
+USConus = st_transform(USConus, eqdc)
+Boundaries = st_transform(Boundaries, eqdc)
+UScities = st_transform(UScities, eqdc)</code></pre>
+<pre class="r"><code># Question2
+# 2.1 - Distance to USA Border (coastline or national) (km)
+Border = st_union(USConus) %&gt;%
+  st_cast(&quot;MULTILINESTRING&quot;)
+
+DistoB = UScities %&gt;%
+  mutate(dist_to_border = st_distance(UScities, Border),
+         dist_to_border = units::set_units(dist_to_border, &quot;km&quot;),
+         dist_to_border = units::drop_units(dist_to_border))
+
+FurthesttoB = DistoB %&gt;%
+  slice_max(dist_to_border, n = 5) %&gt;%
+  select(city, state_name, dist_to_border) %&gt;%
+  st_drop_geometry()
+
+knitr::kable(FurthesttoB,
+             caption = &quot;Furtherest Cities to Border&quot;,
+             col.names = c(&quot;City Name&quot;, &quot;State&quot;, &quot;Distance(km)&quot;))</code></pre>
+<table>
+<caption>Furtherest Cities to Border</caption>
+<thead>
+<tr class="header">
+<th align="left">City Name</th>
+<th align="left">State</th>
+<th align="right">Distance(km)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Dresden</td>
+<td align="left">Kansas</td>
+<td align="right">1012.317</td>
+</tr>
+<tr class="even">
+<td align="left">Herndon</td>
+<td align="left">Kansas</td>
+<td align="right">1007.750</td>
+</tr>
+<tr class="odd">
+<td align="left">Hill City</td>
+<td align="left">Kansas</td>
+<td align="right">1005.147</td>
+</tr>
+<tr class="even">
+<td align="left">Atwood</td>
+<td align="left">Kansas</td>
+<td align="right">1004.734</td>
+</tr>
+<tr class="odd">
+<td align="left">Jennings</td>
+<td align="left">Kansas</td>
+<td align="right">1003.646</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># 2.2 - Distance to States (km)
+Border2 = st_combine(USConus) %&gt;%
+  st_cast(&quot;MULTILINESTRING&quot;)
+
+DistoB2 = UScities %&gt;%
+  mutate(dist_to_state = st_distance(UScities, Border2),
+         dist_to_state = units::set_units(dist_to_state, &quot;km&quot;),
+         dist_to_state = units::drop_units(dist_to_state))
+
+FurthesttoS = DistoB2 %&gt;%
+  slice_max(dist_to_state, n = 5) %&gt;%
+  select(city, state_name, dist_to_state) %&gt;%
+  st_drop_geometry()
+
+knitr::kable(FurthesttoS,
+             caption = &quot;Furtherest Cities to the States&quot;,
+             col.names = c(&quot;City Name&quot;, &quot;State&quot;, &quot;Distance(km)&quot;))</code></pre>
+<table>
+<caption>Furtherest Cities to the States</caption>
+<thead>
+<tr class="header">
+<th align="left">City Name</th>
+<th align="left">State</th>
+<th align="right">Distance(km)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Lampasas</td>
+<td align="left">Texas</td>
+<td align="right">308.9216</td>
+</tr>
+<tr class="even">
+<td align="left">Bertram</td>
+<td align="left">Texas</td>
+<td align="right">302.8190</td>
+</tr>
+<tr class="odd">
+<td align="left">Kempner</td>
+<td align="left">Texas</td>
+<td align="right">302.5912</td>
+</tr>
+<tr class="even">
+<td align="left">Harker Heights</td>
+<td align="left">Texas</td>
+<td align="right">298.8125</td>
+</tr>
+<tr class="odd">
+<td align="left">Florence</td>
+<td align="left">Texas</td>
+<td align="right">298.6804</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># 2.3 - Distance to Mexico (km)
+BorderMexico = Boundaries %&gt;%
+  filter(name %in% c(&quot;Mexico&quot;)) %&gt;%
+  st_cast(&quot;MULTILINESTRING&quot;)
+
+DistoBMexico = UScities %&gt;%
+  mutate(dist_to_mexico = st_distance(UScities, BorderMexico),
+         dist_to_mexico = units::set_units(dist_to_mexico, &quot;km&quot;),
+         dist_to_mexico = units::drop_units(dist_to_mexico))
+
+FurthesttoM = DistoBMexico %&gt;%
+  slice_max(dist_to_mexico, n = 5) %&gt;%
+  select(city, state_name, dist_to_mexico) %&gt;%
+  st_drop_geometry()
+
+
+knitr::kable(FurthesttoM,
+             caption = &quot;Furtherest Cities to Mexico&quot;,
+             col.names = c(&quot;City Name&quot;, &quot;State&quot;, &quot;Distance(km)&quot;))</code></pre>
+<table>
+<caption>Furtherest Cities to Mexico</caption>
+<thead>
+<tr class="header">
+<th align="left">City Name</th>
+<th align="left">State</th>
+<th align="right">Distance(km)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Caribou</td>
+<td align="left">Maine</td>
+<td align="right">3250.334</td>
+</tr>
+<tr class="even">
+<td align="left">Presque Isle</td>
+<td align="left">Maine</td>
+<td align="right">3234.570</td>
+</tr>
+<tr class="odd">
+<td align="left">Calais</td>
+<td align="left">Maine</td>
+<td align="right">3134.348</td>
+</tr>
+<tr class="even">
+<td align="left">Eastport</td>
+<td align="left">Maine</td>
+<td align="right">3125.624</td>
+</tr>
+<tr class="odd">
+<td align="left">Old Town</td>
+<td align="left">Maine</td>
+<td align="right">3048.366</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># 2.4 - Distance to Canada (km)
+BorderCanada = Boundaries %&gt;%
+  filter(name %in% c(&quot;Canada&quot;)) %&gt;%
+  st_cast(&quot;MULTILINESTRING&quot;)
+
+DistoBCanada = UScities %&gt;%
+  mutate(dist_to_canada = st_distance(UScities, BorderCanada),
+         dist_to_canada = units::set_units(dist_to_canada, &quot;km&quot;),
+         dist_to_canada = units::drop_units(dist_to_canada))
+
+FurthesttoC = DistoBCanada %&gt;%
+  slice_max(dist_to_canada, n = 5) %&gt;%
+  select(city, state_name, dist_to_canada) %&gt;%
+  st_drop_geometry()
+
+knitr::kable(FurthesttoC,
+             caption = &quot;Furtherest Cities to Canada&quot;,
+             col.names = c(&quot;City Name&quot;, &quot;State&quot;, &quot;Distance(km)&quot;))</code></pre>
+<table>
+<caption>Furtherest Cities to Canada</caption>
+<thead>
+<tr class="header">
+<th align="left">City Name</th>
+<th align="left">State</th>
+<th align="right">Distance(km)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Guadalupe Guerra</td>
+<td align="left">Texas</td>
+<td align="right">2206.455</td>
+</tr>
+<tr class="even">
+<td align="left">Sandoval</td>
+<td align="left">Texas</td>
+<td align="right">2205.641</td>
+</tr>
+<tr class="odd">
+<td align="left">Fronton</td>
+<td align="left">Texas</td>
+<td align="right">2204.784</td>
+</tr>
+<tr class="even">
+<td align="left">Fronton Ranchettes</td>
+<td align="left">Texas</td>
+<td align="right">2202.118</td>
+</tr>
+<tr class="odd">
+<td align="left">Evergreen</td>
+<td align="left">Texas</td>
+<td align="right">2202.020</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># Question3
+# 3.1 - Data
+LargeUScities = UScities %&gt;%
+  slice_max(population, n = 10)
+
+ggplot()+
+  geom_sf(data = Boundaries, aes(), col = &quot;#f30100&quot;, size = 0.3) +
+  geom_sf(data = DistoB2, col = &quot;#d9f2ff&quot;, lty = 2) +
+  geom_sf(data = LargeUScities, col = &quot;#50d0d0&quot;, size = 1.5) +
+  ggthemes::theme_map() +
+  labs(title = &quot;10 largest USA cities (by population)&quot;,
+       x = &quot;Longitude&quot;,
+       y = &quot;Latitude&quot;) +
+  ggrepel::geom_label_repel(
+    data = LargeUScities,
+    aes(label = city, geometry = geometry),
+    stat = &quot;sf_coordinates&quot;,
+    size = 2.5)</code></pre>
+<p><img src="lab03_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code># 3.2 - City Distance from the Border
+FurthesttoB3 = DistoB %&gt;%
+  slice_max(dist_to_border, n = 5) %&gt;%
+  select(city, state_name, dist_to_border)
+
+ggplot() +
+  geom_sf(data = Border, aes()) +
+  geom_sf(data = DistoB, aes(col = dist_to_border), size = 0.3) +
+  geom_sf(data = FurthesttoB3, col = &quot;#50d0d0&quot;) +
+  ggthemes::theme_map() +
+  labs(title = &quot;5 Cities That Are Farthest from the Border&quot;,
+       x = &quot;Longitude&quot;,
+       y = &quot;Latitude&quot;) +
+  ggrepel::geom_label_repel(
+    data = FurthesttoB3,
+    aes(label = city, geometry = geometry),
+    stat = &quot;sf_coordinates&quot;,
+    size = 3)</code></pre>
+<p><img src="lab03_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code># 3.3 - City Distance from Nearest State
+FurthesttoS3 = DistoB2 %&gt;%
+  slice_max(dist_to_state, n = 5) %&gt;%
+  select(city, state_name, dist_to_state)
+
+ggplot() +
+  geom_sf(data = Border2, aes()) +
+  geom_sf(data = DistoB2, aes(col = dist_to_state), size = 0.3) +
+  geom_sf(data = FurthesttoS3, col = &quot;#50d0d0&quot;) +
+  ggthemes::theme_map() +
+  labs(title = &quot;5 Cities That Are Farthest from Any Nearest State Border&quot;,
+        x = &quot;Longitude&quot;,
+        y = &quot;Latitude&quot;) +
+  ggrepel::geom_label_repel(
+    data = FurthesttoS3,
+    aes(label = city, geometry = geometry),
+    stat = &quot;sf_coordinates&quot;,
+    size = 3)</code></pre>
+<p><img src="lab03_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code># 3.4 - Equidistant boundary from Mexico and Canada
+Equidis = UScities %&gt;%
+  mutate(MCdis = abs(DistoBMexico$dist_to_mexico - DistoBCanada$dist_to_canada)) %&gt;%
+  select(MCdis, city, state_name, population)
+
+LargeCities = Equidis %&gt;%
+  filter(MCdis &lt;= 100)  %&gt;%
+  slice_max(population, n = 5)
+
+ggplot() +
+  geom_sf(data = Boundaries, aes(), col = &quot;#f30100&quot;, size = 0.3) +
+  geom_sf(data = Border) +
+  geom_sf(data = Equidis, col = &quot;#f30100&quot;, size = 0.3) +
+  geom_sf(data = LargeCities, col = &quot;#50d0d0&quot;, size = 3) +
+  gghighlight::gghighlight(MCdis &lt;= 100) +
+  ggthemes::theme_map() +
+  labs(title = &quot;5 Most Populous Cities Equal Distance from the Canadian AND Mexican border ± 100 km.&quot;,
+       x = &quot;Longitude&quot;,
+       y = &quot;Latitude&quot;) +
+  ggrepel::geom_label_repel(
+    data = LargeCities,
+    aes(label = city, geometry = geometry),
+    stat = &quot;sf_coordinates&quot;,
+    size = 3)</code></pre>
+<p><img src="lab03_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>#Question 4
+# 4.1 - Quantifing Border Zone (Matches ACLU)
+Totalpop = DistoB %&gt;%
+    mutate(totalpop = sum(population)) %&gt;%
+    select(id, totalpop) %&gt;%
+    st_drop_geometry()
+
+Dangerpop = DistoB %&gt;%
+    filter(dist_to_border &lt;= 160) %&gt;%
+    mutate(dangerpop = sum(population)) %&gt;%
+    left_join(Totalpop, by = &quot;id&quot;)
+
+numbers = length(Dangerpop$city)
+
+Zone = Dangerpop %&gt;%
+  mutate(number = numbers) %&gt;%
+  select(number, dangerpop, totalpop) %&gt;%
+  st_drop_geometry() %&gt;%
+  mutate(percent = dangerpop / totalpop) %&gt;%
+  select(number, dangerpop, percent) %&gt;%
+  head(1)
+
+knitr::kable(Zone, caption = &quot;Quantifing Border Zone&quot;,
+       col.names = c(&quot;Cities Number&quot;, &quot;Population&quot;, &quot;Percentage of Total&quot;))</code></pre>
+<table>
+<caption>Quantifing Border Zone</caption>
+<thead>
+<tr class="header">
+<th align="right">Cities Number</th>
+<th align="right">Population</th>
+<th align="right">Percentage of Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">12255</td>
+<td align="right">259876456</td>
+<td align="right">0.6543463</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># 4.2 - Mapping Border Zone
+ZoneCities = DistoB %&gt;%
+  filter(dist_to_border &lt;= 160)
+
+PopCities = ZoneCities %&gt;%
+  slice_max(population, n = 10)
+
+ggplot() +
+  geom_sf(data = ZoneCities, aes(col = dist_to_border), size = 0.3) +
+  geom_sf(data = PopCities, col = &quot;#50d0d0&quot;) +
+  geom_sf(data = Border) +
+  scale_color_gradient(low = &quot;orange&quot;, high = &quot;darkred&quot;) +
+  gghighlight(dist_to_border &lt;= 160) +
+  ggthemes::theme_map() +
+  labs(title = paste(&quot;10 most populous cities in the Dange Zone&quot;)) +
+  ggrepel::geom_label_repel(
+    data = PopCities,
+    aes(label = city, geometry = geometry),
+    stat = &quot;sf_coordinates&quot;,
+    size = 3)</code></pre>
+<p><img src="lab03_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

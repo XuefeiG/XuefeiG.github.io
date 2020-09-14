@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Xuefei Gao" />
+
+
+<title>Lab-05: Rasters &amp; Remote Sensing</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/sandstone.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Xuefei Geo176A Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="geog176A.html">
+    <span class="fa fa-globe"></span>
+     
+    GIS Work
+  </a>
+</li>
+<li>
+  <a href="CV.html">
+    <span class="fa fa-frog"></span>
+     
+    CV
+  </a>
+</li>
+<li>
+  <a href="lab03.html">
+    <span class="fa fa-android"></span>
+     
+    lab03
+  </a>
+</li>
+<li>
+  <a href="lab04.html">
+    <span class="fa fa-android"></span>
+     
+    lab04
+  </a>
+</li>
+<li>
+  <a href="lab05.html">
+    <span class="fa fa-android"></span>
+     
+    lab05
+  </a>
+</li>
+<li>
+  <a href="lab06.html">
+    <span class="fa fa-android"></span>
+     
+    lab06
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/XuefeiG/XuefeiG.github.io">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Lab-05: Rasters &amp; Remote Sensing</h1>
+<h4 class="author">Xuefei Gao</h4>
+<h4 class="date">2020/9/7</h4>
+
+</div>
+
+
+<i class="fa fa-android fa-3x" style="color:pink;"></i>
+</center>
+<pre class="r"><code>library(tidyverse)
+library(sf)
+library(raster)
+library(getlandsat)
+library(mapview)
+library(osmdata)
+library(stats)
+
+# Question 1
+bb = read_csv(&quot;data/uscities.csv&quot;) %&gt;%
+  filter(city  == &quot;Palo&quot;) %&gt;%
+  st_as_sf(coords = c(&quot;lng&quot;, &quot;lat&quot;), crs = 4326) %&gt;%
+  st_transform(5070) %&gt;%
+  st_buffer(5000) %&gt;%
+  st_bbox() %&gt;%
+  st_as_sfc
+
+# Question 2
+meta = read_csv(&quot;data/palo-flood.csv&quot;)
+files = lsat_scene_files(meta$download_url) %&gt;%
+  filter(grepl(paste0(&quot;B&quot;,1:6,&quot;.TIF$&quot;, collapse = &quot;|&quot;), file)) %&gt;%
+  arrange(file) %&gt;%
+  pull(file)
+
+st = sapply(files, lsat_image)
+b = stack(st) %&gt;%
+  setNames(paste0(&quot;band&quot;, 1:6))
+plot(b)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<pre class="r"><code>#The dimensions of the stacked image is 7811, 7681, the CRS is WGS84, and the cell resolution is 30, 30.
+
+cropper = bb %&gt;%
+  st_as_sf() %&gt;%
+  st_transform(crs(b))
+r = crop(b, cropper)
+r = r %&gt;% 
+  setNames(c(&quot;Coastal&quot;, &quot;Blue&quot;, &quot;Green&quot;, &quot;Red&quot;, &quot;Nir&quot;, &quot;Swir&quot;))
+plot(r)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-2.png" width="672" /></p>
+<pre class="r"><code>#The dimensions of the cropped image is 340, 346, the CRS is WGS84, and the cell resolution is 30, 30. 
+
+# Question 3
+#Without Color Stretch
+#natural color
+plotRGB(r, r = 4, g = 3, b = 2)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-3.png" width="672" /></p>
+<pre class="r"><code>#color infrared
+plotRGB(r, r = 5, g = 4, b = 3)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-4.png" width="672" /></p>
+<pre class="r"><code>#false color water focus
+plotRGB(r, r = 5, g = 6, b = 4)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-5.png" width="672" /></p>
+<pre class="r"><code>#Swir
+plotRGB(r, r = 7, g = 6, b = 4)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-6.png" width="672" /></p>
+<pre class="r"><code>#With Color Stretch
+#natural color
+plotRGB(r, r = 4, g = 3, b = 2, stretch = &quot;hist&quot;)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-7.png" width="672" /></p>
+<pre class="r"><code>#color infrared
+plotRGB(r, r = 5, g = 4, b = 3, stretch = &quot;lin&quot;)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-8.png" width="672" /></p>
+<pre class="r"><code>#false color water focus
+plotRGB(r, r = 5, g = 6, b = 4, stretch = &quot;lin&quot;)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-9.png" width="672" /></p>
+<pre class="r"><code>#Swir
+plotRGB(r, r = 7, g = 6, b = 4, stretch = &quot;hist&quot;)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-10.png" width="672" /></p>
+<pre class="r"><code>#The purpose of applying a color stretch is to contrast the images better by increasing the color range.
+
+# Question 4
+ndvi = (r$Nir - r$Red) / (r$Nir + r$Red)
+ndwi = (r$Green - r$Nir) / (r$Green + r$Nir)
+mndwi = (r$Green - r$Swir) / (r$Green + r$Swir)
+wri = (r$Green + r$Red) / (r$Nir + r$Swir)
+swi = 1 / (sqrt(r$Blue - r$Swir))
+
+stack = stack(ndvi, ndwi, mndwi, wri, swi) %&gt;% 
+  setNames(c(&quot;NDVI&quot;, &quot;NDWI&quot;, &quot;MNDWI&quot;, &quot;WRI&quot;, &quot;SWI&quot;))
+palette = colorRampPalette(c(&quot;blue&quot;,&quot;white&quot;,&quot;red&quot;))
+plot(stack, col = palette(256))</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-11.png" width="672" /></p>
+<pre class="r"><code>#The 5 images are similar because all of them shows the surface water and other parts of the land separately by using different colors. The biggest differences of these images are they use different expressions for the dry land part. We can see in NDVI and NDWI, the districts are much clearer by using more colors while in MNDWI and WRI the districts of the land part are not that clear. And in SWI, the land part even disappear to emphasize the surface water area.
+
+threshold1 = function(x){ifelse(x &lt;= 0, 1, NA)}
+threshold2 = function(x){ifelse(x &gt;= 0, 1, NA)}
+threshold3 = function(x){ifelse(x &gt;= 1, 1, NA)}
+threshold4 = function(x){ifelse(x &lt;= 5, 1, NA)}
+
+flood1 = calc(ndvi,threshold1)
+flood2 = calc(ndwi, threshold2)
+flood3 = calc(mndwi, threshold2)
+flood4 = calc(wri, threshold3)
+flood5 = calc(swi, threshold4)
+
+s = stack(flood1, flood2, flood3, flood4, flood5) %&gt;% 
+  setNames(c(&quot;NDVI&quot;, &quot;NDWI&quot;, &quot;MNDWI&quot;, &quot;WRI&quot;, &quot;SWI&quot;))
+plot(s, colNA = &quot;white&quot;, col = c(&quot;white&quot;,&quot;blue&quot;))</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-12.png" width="672" /></p>
+<pre class="r"><code>#Question 5
+set.seed(09062020)
+dim(r)</code></pre>
+<pre><code>## [1] 340 346   6</code></pre>
+<pre class="r"><code>values = getValues(r)
+dim(values)</code></pre>
+<pre><code>## [1] 117640      6</code></pre>
+<pre class="r"><code>values = na.omit(values)
+
+#In r, 117640 is the number of cells. In v, 117640 is the number of rows. Each row contains the data for one cell
+
+kmeans = kmeans(values, 12, iter.max = 100)
+kmeans_raster = r$Coastal
+values(kmeans_raster) = kmeans$cluster
+
+v1 = values(s$NDVI)
+table1 = table(v1, values(kmeans_raster))
+threshold5 = function(x){ifelse(x == 1, 1, 0)}
+flood6 = calc(kmeans_raster, threshold5) %&gt;%
+setNames(&#39;KMeans&#39;)
+s1 = addLayer(s, flood6)
+plot(s1, colNA = &quot;white&quot;, col = c(&quot;white&quot;,&quot;blue&quot;))</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-13.png" width="672" /></p>
+<pre class="r"><code>#Question 6
+kabletable = cellStats(s, sum)
+knitr::kable(kabletable, caption = &quot;Flooded Cells&quot;, col.names = c(&quot;Number&quot;))</code></pre>
+<table>
+<caption>Flooded Cells</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Number</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">NDVI</td>
+<td align="right">6666</td>
+</tr>
+<tr class="even">
+<td align="left">NDWI</td>
+<td align="right">7212</td>
+</tr>
+<tr class="odd">
+<td align="left">MNDWI</td>
+<td align="right">11939</td>
+</tr>
+<tr class="even">
+<td align="left">WRI</td>
+<td align="right">8469</td>
+</tr>
+<tr class="odd">
+<td align="left">SWI</td>
+<td align="right">15201</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>area = kabletable * 900
+knitr::kable(area, caption = &quot;Area of Flooded Cells&quot;, col.names = c(&quot;Area(m^2)&quot;))</code></pre>
+<table>
+<caption>Area of Flooded Cells</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Area(m^2)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">NDVI</td>
+<td align="right">5999400</td>
+</tr>
+<tr class="even">
+<td align="left">NDWI</td>
+<td align="right">6490800</td>
+</tr>
+<tr class="odd">
+<td align="left">MNDWI</td>
+<td align="right">10745100</td>
+</tr>
+<tr class="even">
+<td align="left">WRI</td>
+<td align="right">7622100</td>
+</tr>
+<tr class="odd">
+<td align="left">SWI</td>
+<td align="right">13680900</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>total = calc(s, fun=sum)
+plot(total, col = blues9)</code></pre>
+<p><img src="lab05_files/figure-html/unnamed-chunk-1-14.png" width="672" /></p>
+<pre class="r"><code>#Some of the cell values not an even number because raster layer numbers are odd.
+
+#Extra Credit 
+point = st_point(c(-91.78959, 42.06305)) 
+point1 = st_sfc(point, crs = 4326) %&gt;% 
+  st_transform(crs(s1)) %&gt;% 
+  st_sf()
+  
+floodv = raster::extract(s1, point1)
+(flooding = data.frame(floodv))</code></pre>
+<pre><code>##   NDVI NDWI MNDWI WRI SWI KMeans
+## 1    1    1     1   1   1      0</code></pre>
+<pre class="r"><code>#6 maps captured the flooding at that location.</code></pre>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

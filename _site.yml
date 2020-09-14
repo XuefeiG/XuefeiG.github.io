@@ -1,0 +1,32 @@
+name: "first-website"
+output_dir: "."
+navbar:
+  title: "Xuefei Geo176A Website"
+  left:
+    - text: "Home"
+      icon: fa-home
+      href: index.html
+    - text: "GIS Work"
+      icon: fa-globe
+      href: geog176A.html
+    - text: "CV"
+      icon: fa-frog
+      href: CV.html
+    - text: "lab03"
+      icon: fa-android
+      href: lab03.html
+    - text: "lab04"
+      icon: fa-android
+      href: lab04.html
+    - text: "lab05"
+      icon: fa-android
+      href: lab05.html
+    - text: "lab06"
+      icon: fa-android
+      href: lab06.html
+  right:
+    - icon: fa-github
+      href: https://github.com/XuefeiG/XuefeiG.github.io
+output:
+  html_document:
+    theme: sandstone
